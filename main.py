@@ -11,12 +11,7 @@ from modules.predict import predict
 #żeby odpalić test python main.py --mode predict --input_file data/ratings_test_no_ratings.csv --model_path models_trained/model_NMF.pkl --output_file results/preds.csv --alg NMF   
 
 #żeby odpalić predict python main.py --mode train --train_file data/ratings_train.csv --model_path models_trained/model_NMF.pkl --alg NMF 
-#żeby odpalić SGD_IMPROVED: python main.py --mode train --train_file data/ratings_train.csv --model_path models_trained/model_SGD_IMPROVED.pkl --alg SGD_IMPROVED
-#żeby odpalić HYBRID: python main.py --mode train --train_file data/ratings_train.csv --model_path models_trained/model_HYBRID.pkl --alg HYBRID
-#żeby odpalić HYBRID_TUNED: python main.py --mode train --train_file data/ratings_train.csv --model_path models_trained/model_HYBRID_TUNED.pkl --alg HYBRID_TUNED
-#żeby odpalić NMF_TUNED: python main.py --mode train --train_file data/ratings_train.csv --model_path models_trained/model_NMF_TUNED.pkl --alg NMF_TUNED
-#żeby odpalić SVD1_TUNED: python main.py --mode train --train_file data/ratings_train.csv --model_path models_trained/model_SVD1_TUNED.pkl --alg SVD1_TUNED
-#żeby odpalić SVD2_TUNED: python main.py --mode train --train_file data/ratings_train.csv --model_path models_trained/model_SVD2_TUNED.pkl --alg SVD2_TUNED
+#żeby odpalić BEST: python main.py --mode train --train_file data/ratings_train.csv --model_path models_trained/model_BEST.pkl --alg BEST
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Recommender System with Multiple Algorithms")
