@@ -27,7 +27,6 @@ def find_optimal_r(train_file, r_candidates=[20, 25, 30]):
 
     print(f"\nStrategy: weighted")
     print(f"{'r':<5} | {'Val RMSE':<12}")
-    print("-" * 22)
 
     for r in r_candidates:
         model = NMF(n_components=r, init="random", random_state=0, max_iter=10_000)
@@ -41,14 +40,13 @@ def find_optimal_r(train_file, r_candidates=[20, 25, 30]):
         if rmse < best_overall["rmse"]:
             best_overall = {"rmse": rmse, "r": r, "strategy": "weighted"}
 
-    print("\n" + "=" * 40)
-    print(f"BEST → strategy={best_overall['strategy']}, r={best_overall['r']}, RMSE={best_overall['rmse']:.4f}")
+    print(f"BEST - strategy={best_overall['strategy']}, r={best_overall['r']}, RMSE={best_overall['rmse']:.4f}")
     return best_overall["r"]
 
 
 def _fill_only(train_file, user_map, movie_map):
     df = pd.read_csv(train_file)
-    unique_users = sorted(user_map,  key=user_map.get)
+    unique_users = sorted(user_map, key=user_map.get)
     unique_movies = sorted(movie_map, key=movie_map.get)
     
     u_means = df.groupby("userId")["rating"].mean().reindex(unique_users).values
@@ -69,28 +67,6 @@ def train_nmf_model(train_file, n_components):
 
     return Z_approx, user_map, movie_map, user_means, movie_means, global_mean
 
-def train_masked_nmf(Z, mask, n_components=20, n_iter=50):
-    """
-    Alternating NMF that only updates based on known ratings.
-    After each full NMF step, restore known ratings before the next iteration.
-    """
-    global_mean = Z[mask].mean()
-    Z_work = Z.copy()
-    
-    for iteration in range(n_iter):
-        model = NMF(n_components=n_components, init='random', 
-                    random_state=0, max_iter=5000000)
-        W = model.fit_transform(Z_work)
-        H = model.components_
-        Z_approx = W @ H
-        
-        Z_work = Z.copy()
-        Z_work[~mask] = Z_approx[~mask]
-        
-        # Clip to valid range
-        Z_work = np.clip(Z_work, 0.5, 5.0)
-    
-    return Z_work, W, H
 
 def train_svd1_model(train_file, n_components):
     df = pd.read_csv(train_file)
@@ -134,7 +110,6 @@ def find_optimal_r_svd1(train_file, r_candidates=[90,95]):
 
     print(f"\nStrategy: weighted (SVD)")
     print(f"{'r':<5} | {'Val RMSE':<12}")
-    print("-" * 22)
 
     for r in r_candidates:
         max_r = min(Z_train.shape) - 1
@@ -159,8 +134,7 @@ def find_optimal_r_svd1(train_file, r_candidates=[90,95]):
             best_overall["rmse"] = rmse
             best_overall["r"] = r
 
-    print("\n" + "=" * 40)
-    print(f"BEST SVD → r={best_overall['r']}, RMSE={best_overall['rmse']:.4f}")
+    print(f"BEST SVD - r={best_overall['r']}, RMSE={best_overall['rmse']:.4f}")
     return best_overall["r"]
 
 def train_svd2_model(train_file, n_components):
@@ -199,7 +173,6 @@ def find_optimal_r_svd2(train_file, r_candidates=[40,45,50,55,60]):
 
     print("\nSVD2 – finding r")
     print(f"{'r':<5} | {'Val RMSE':<12}")
-    print("-" * 22)
     best_rmse = float("inf")
     best_r = None
     
@@ -287,7 +260,6 @@ def find_optimal_r_sgd(train_file, r_candidates=np.arange(10, 101, 5),
 
     print("\nSGD – finding r")
     print(f"{'r':<5} | {'Val RMSE':<12}")
-    print("-" * 22)
     best_r, best_rmse = None, float("inf")
     for r in r_candidates:
         P = np.random.normal(0, 0.1, (n_users, r))
@@ -405,11 +377,8 @@ def find_optimal_hybrid(train_file,
     Z, _, _, _ = build_rating_matrix(train_file)
     best_params = {"rmse": float("inf")}
 
-    print("\n" + "="*80)
     print("GRID SEARCH: HYBRID SVD + SGD Hyperparameter Tuning")
-    print("="*80)
     print(f"{'n_factors':<10} {'svd_w':<8} {'lr':<8} {'reg':<8} {'Val RMSE':<10}")
-    print("-"*54)
 
     for n_factors in n_factors_candidates:
         U, s, Vt = np.linalg.svd(Z, full_matrices=False)
@@ -459,9 +428,7 @@ def find_optimal_hybrid(train_file,
                             "reg": reg
                         }
 
-    print("="*80)
     print(f"BEST PARAMS: n_factors={best_params['n_factors']}, svd_weight={best_params['svd_weight']}, lr={best_params['lr']}, reg={best_params['reg']}, RMSE={best_params['rmse']:.4f}")
-    print("="*80)
     return best_params
 
 
